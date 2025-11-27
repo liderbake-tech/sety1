@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mysterious Deep Space</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial;
+    color: white;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 3D Stars Layer */
+#space {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -3;
+    background: radial-gradient(ellipse at bottom, #000011 0%, #000000 100%);
+}
+
+/* Star */
+.star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    opacity: 0.8;
+}
+
+/* Fog / Glowing particles */
+.fog {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0,200,255,0.2) 0%, transparent 70%);
+    filter: blur(60px);
+    animation: floatFog linear infinite;
+}
+
+@keyframes floatFog {
+    0% { transform: translate(0,0); }
+    50% { transform: translate(100px,-50px); }
+    100% { transform: translate(0,0); }
+}
+
+/* Meteors */
+.meteor {
+    position: absolute;
+    width: 2px;
+    height: 50px;
+    background: linear-gradient(white, transparent);
+    opacity: 0.7;
+    transform: rotate(45deg);
+}
+
+/* Secret code box */
+.box {
+    background: rgba(255,255,255,0.05);
+    padding: 30px;
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 30px #00eaff77;
+    text-align: center;
+    z-index: 1;
+}
+
+/* Input & button */
+input {
+    width: 220px;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-size: 18px;
+}
+
+button {
+    margin-top: 12px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    background: #00eaff;
+    transition: 0.2s;
+}
+button:hover { transform: scale(1.1); background: #00ffd0; }
+
+/* Secret content */
+#secretContent {
+    display: none;
+    text-align: center;
+    animation: show 1.5s forwards;
+}
+@keyframes show {
+    from { opacity:0; transform: translateY(40px);}
+    to { opacity:1; transform: translateY(0);}
+}
+
+.linkBtn {
+    display: block;
+    width: 260px;
+    margin: 25px auto;
+    padding: 15px;
+    border-radius: 15px;
+    background: #00eaff;
+    color: black;
+    text-decoration: none;
+    font-size: 20px;
+    transition: 0.2s;
+}
+.linkBtn:hover { transform: scale(1.1); background: #00ffd0; }
+
+</style>
+</head>
+<body>
+
+<!-- Space -->
+<div id="space"></div>
+
+<!-- Audio -->
+<audio id="bgMusic" loop>
+    <source src="https://files.catbox.moe/tv0p7g.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Secret code box -->
+<div class="box" id="loginBox">
+    <h2>Enter Secret Code</h2>
+    <input type="password" id="codeInput" placeholder="">
+    <br>
+    <button onclick="checkCode()">Unlock</button>
+    <p id="msg" style="color:red;margin-top:10px;"></p>
+</div>
+
+<!-- Secret content -->
+<div id="secretContent">
+    <h1>🔐 Secret Supercar Zone</h1>
+    <p>Select an official website</p>
+
+    <a class="linkBtn" href="https://www.bmw.com" target="_blank">BMW Official</a>
+    <a class="linkBtn" href="https://www.koenigsegg.com" target="_blank">Koenigsegg Official</a>
+</div>
+
+<script>
+// Generate stars
+const space = document.getElementById("space");
+for(let i=0;i<400;i++){
+    const star = document.createElement("div");
+    star.classList.add("star");
+    let size = Math.random()*2+1+"px";
+    star.style.width = size;
+    star.style.height = size;
+    star.style.left = Math.random()*100+"%";
+    star.style.top = Math.random()*100+"%";
+    star.style.animationDuration = (3+Math.random()*7)+"s";
+    space.appendChild(star);
+}
+
+// Generate fog
+for(let i=0;i<4;i++){
+    const fog = document.createElement("div");
+    fog.classList.add("fog");
+    fog.style.left = Math.random()*100+"%";
+    fog.style.top = Math.random()*100+"%";
+    fog.style.animationDuration = (10+Math.random()*10)+"s";
+    space.appendChild(fog);
+}
+
+// Generate meteors
+for(let i=0;i<8;i++){
+    const meteor = document.createElement("div");
+    meteor.classList.add("meteor");
+    meteor.style.left = Math.random()*100+"%";
+    meteor.style.top = Math.random()*50+"%";
+    meteor.style.animationDuration = (1+Math.random()*3)+"s";
+    space.appendChild(meteor);
+    meteor.style.animation = `shoot ${2+Math.random()*2}s linear infinite`;
+}
+
+// Meteor keyframes
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes shoot {
+    0% { transform: translate(0,0) rotate(45deg); opacity:1; }
+    100% { transform: translate(-300px, 600px) rotate(45deg); opacity:0; }
+}`;
+document.head.appendChild(style);
+
+// Unlock
+function checkCode(){
+    const input = document.getElementById("codeInput").value;
+    const msg = document.getElementById("msg");
+    if(input==="200710"){
+        document.getElementById("loginBox").style.display="none";
+        document.getElementById("secretContent").style.display="block";
+        // Play music
+        const music = document.getElementById("bgMusic");
+        music.volume = 0;
+        music.play().catch(e=>console.log("Autoplay blocked"));
+        let vol = 0;
+        const fade = setInterval(()=>{
+            if(vol<0.6){ vol+=0.02; music.volume=vol; }
+            else clearInterval(fade);
+        },100);
+    } else {
+        msg.innerText="❌ Wrong code!";
+    }
+}
+</script>
+
+</body>
+</html>
